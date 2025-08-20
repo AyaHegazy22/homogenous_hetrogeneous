@@ -1,0 +1,71 @@
+#!python
+cubit.cmd('reset ')
+cubit.cmd('undo on')
+
+# Create the main cylinder
+cubit.cmd('create cylinder radius 6350 height 25000')
+
+# Number of annular divisions
+n_annuli = 8
+total_radius = 6350
+height = 25000
+
+# Create annular divisions
+for i in range(n_annuli):
+    #outer_radius = ((i + 1) * total_radius) / n_annuli
+    outer_radius = total_radius * ((i + 1) / n_annuli) ** 0.5
+    cubit.cmd(f'create cylinder radius {outer_radius} height {height}')
+
+cubit.cmd('delete volume 1')
+cubit.cmd('merge all')
+cubit.cmd('compress all')
+
+for i in range(n_annuli):
+    if i > 0:
+        cubit.cmd(f'subtract volume {i} from volume {i + 1} keep')
+
+cubit.cmd('delete volume 2 to {}'.format(n_annuli))
+cubit.cmd('merge all')
+cubit.cmd('compress all')
+
+############# 
+# Create the prism and subtract it from the main volume
+cubit.cmd('create prism height 25000 sides 3 radius 18799')
+cubit.cmd('subtract volume 1 to {} from volume {}'.format(n_annuli, n_annuli + 1) + ' keep')
+cubit.cmd('delete volume {}'.format(n_annuli + 1))
+cubit.cmd('merge all')
+cubit.cmd('compress all')
+
+cubit.cmd('create cylinder radius 7940  height 25000 ')
+cubit.cmd('volume {} move x 9385 y 16255.3'.format(n_annuli + 2))
+cubit.cmd('create cylinder radius 7940  height 25000')
+cubit.cmd('volume {} move x 9385 y -16255.3'.format(n_annuli + 3))
+cubit.cmd('create cylinder radius 7940  height 25000')
+cubit.cmd('volume {} move x -18799'.format(n_annuli + 4))
+cubit.cmd('subtract volume {} to {} from volume {}'.format(n_annuli + 2, n_annuli + 4, n_annuli + 1) )
+cubit.cmd('merge all')
+cubit.cmd('compress all')
+cubit.cmd('volume all size auto factor 1')
+cubit.cmd('volume all scheme tetmesh')
+cubit.cmd('mesh volume all')
+
+cubit.cmd('#scaling')
+cubit.cmd('volume all scale 1e-6 1e-6 1e-6')
+
+#############
+cubit.cmd('block ' + str(7) + ' volume 1 to {}'.format(n_annuli)) # block 7 is cylinder
+cubit.cmd('block ' + str(8) + ' volume {}'.format(n_annuli + 1)) # block 8 is matrix
+
+for i in range(n_annuli + 1):
+    if i > 0:
+        cubit.cmd(f'sideset 30 surface {i * 2 + i - 1}')
+        cubit.cmd(f'sideset 40 surface {i * 2 + i }')
+
+cubit.cmd('sideset ' + str(50) + ' surface {}'.format(3 * n_annuli + 1) ) 
+cubit.cmd('sideset ' + str(60) + ' surface {}'.format(3 * n_annuli + 2) )
+cubit.cmd('sideset ' + str(70) + ' surface {}'.format(3 * n_annuli + 3) ) 
+cubit.cmd('sideset ' + str(80) + ' surface {}'.format(3 * n_annuli + 4) ) 
+cubit.cmd('sideset ' + str(90) + ' surface {}'.format(3 * n_annuli + 5) ) 
+cubit.cmd('sideset ' + str(100) + ' surface {}'.format(3 * n_annuli + 6)) 
+cubit.cmd('sideset ' + str(110) + ' surface {}'.format(3 * n_annuli + 7)) 
+cubit.cmd('sideset ' + str(120) + ' surface {}'.format(3 * n_annuli + 8) ) 
