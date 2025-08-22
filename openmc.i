@@ -1,8 +1,6 @@
 pi = 3.14159265359
 ave_T =  1001.02                           # average temperature (K)
 
-#unit_cell_power = ${fparse power / (n_bundles * n_coolant_channels_per_block) * unit_cell_height / height}
-
 [Mesh]
   type = FileMesh
   file = mesh/multi_layer_equal_volumes_n=8.e
