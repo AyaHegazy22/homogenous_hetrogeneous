@@ -19,7 +19,7 @@ model = openmc.model.Model()
 m = 100.0
 
 # geometry
-reactor_height = 0.025*m     #April specified that number
+reactor_height = 0.025*m     
 reactor_bottom = -reactor_height/2.0
 reactor_top = reactor_bottom + reactor_height
 
@@ -153,7 +153,7 @@ triso_universe = openmc.Universe(name='TRISO Universe')
 triso_universe.add_cell(openmc.Cell(fill=triso_lattice))
 
 # Number of cylinders
-n_c = 10
+n_c = 8
 
 # Total radius of the original cylinder
 total_radius = 0.5 * 1.27  # 1.27 diameter divided by 2 for radius
@@ -161,7 +161,7 @@ total_radius = 0.5 * 1.27  # 1.27 diameter divided by 2 for radius
 # Create the smaller cylindrical surfaces
 cylindrical_surfaces = []
 for i in range(n_c):
-    #r = (i + 1) * total_radius / n_c
+    #r = (i + 1) * total_radius / n_c # if not considering equal volumes
     r = math.sqrt((i + 1) / n_c) * total_radius 
     cylindrical_surfaces.append(openmc.ZCylinder(r=r))
 
@@ -338,3 +338,4 @@ tally_shem.scores = ['flux']
 
 tallies = openmc.Tallies([fuel_tally, reaction_tally, tally_shem, flux_energy_tally])
 tallies.export_to_xml()
+
