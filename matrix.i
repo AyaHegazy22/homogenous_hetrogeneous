@@ -51,7 +51,7 @@ opyc_fraction = ${fparse (oPyC_radius^3 - SiC_radius^3) / oPyC_radius^3}
 []
 
 
-[BCs] # Make it neumann on top and bottom and drichlet (500.0) on the outer surface
+[BCs] # Make it neumann on top and bottom and sides, and Dirichlet on the parts touching the coolant
   [top_bottom]
     type = NeumannBC
     variable =  matrix_temp
